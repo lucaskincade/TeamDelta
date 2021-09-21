@@ -33,7 +33,7 @@ CREATE TABLE Vehicle (
 )
 
 CREATE TABLE CustomerVehicle (
-	CVehicleID PRIMARY KEY IDENTITY(1,1),
+	CVehicleID INT PRIMARY KEY IDENTITY(1,1),
 	CVehicleMake VARCHAR(40),
 	CVehicleModel VARCHAR(50),
 	CVehicleYear INT,
