@@ -8,7 +8,7 @@ CREATE TABLE Customer (
 	CustomerID INT PRIMARY KEY IDENTITY(1,1),
 	FirstName VARCHAR(20),
 	LastName VARCHAR(20)
-	LoginID INT FOREIGN KEY,
+	LoginID INT,
 	FOREIGN KEY (LoginID) REFERENCES Login(LoginID)
 )
 
@@ -43,8 +43,8 @@ CREATE TABLE CustomerVehicle (
 	CVehicleCyl INT,
 	CVehicleLit DEC,
 	CVehicleOdometer INT,
-	CustomerID INT FOREIGN KEY,
-	VehicleID INT FOREIGN KEY,
+	CustomerID INT,
+	VehicleID INT,
 	FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
 	FOREIGN KEY (VehicleID) REFERENCES Vehicle(VehicleID)
 )
