@@ -1,17 +1,17 @@
 CREATE TABLE Login (
-	LoginID INT PRIMARY KEY IDENTIFIES(1,1),
+	LoginID INT PRIMARY KEY IDENTITY(1,1),
 	Username VARCHAR(20),
 	Password VARCHAR(20)
 )
 
 CREATE TABLE Customer (
-	CustomerID INT PRIMARY KEY IDENTIFIES(1,1),
+	CustomerID INT PRIMARY KEY IDENTITY(1,1),
 	FirstName VARCHAR(20),
 	LastName VARCHAR(20)
 )
 
 CREATE TABLE Vehicle (
-	VehicleID PRIMARY KEY,
+	VehicleID INT PRIMARY KEY,
 	Make VARCHAR(40),
 	Model VARCHAR(50),
 	Year INT,
@@ -31,7 +31,7 @@ CREATE TABLE Vehicle (
 )
 
 CREATE TABLE CustomerVehicle (
-	CVehicleID PRIMARY KEY IDENTIFIES(1,1),
+	CVehicleID PRIMARY KEY IDENTITY(1,1),
 	CVehicleMake VARCHAR(40),
 	CVehicleModel VARCHAR(50),
 	CVehicleYear INT,
@@ -43,6 +43,6 @@ CREATE TABLE CustomerVehicle (
 	CVehicleOdometer INT,
 	CustomerID INT FOREIGN KEY,
 	VehicleID INT FOREIGN KEY,
-	FOREIGN KEY CustomerVehicle(CustomerID) REFERENCES Customer(CustomerID),
-	FOREIGN KEY CustomerVehicle(VehicleID) REFERENCES Vehicle(VehicleID)
+	FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+	FOREIGN KEY (VehicleID) REFERENCES Vehicle(VehicleID)
 )
