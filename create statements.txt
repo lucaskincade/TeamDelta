@@ -1,0 +1,48 @@
+CREATE TABLE Login (
+	LoginID INT PRIMARY KEY IDENTIFIES(1,1),
+	Username VARCHAR(20),
+	Password VARCHAR(20)
+)
+
+CREATE TABLE Customer (
+	CustomerID INT PRIMARY KEY IDENTIFIES(1,1),
+	FirstName VARCHAR(20),
+	LastName VARCHAR(20)
+)
+
+CREATE TABLE CustomerVehicle (
+	CVehicleID PRIMARY KEY IDENTIFIES(1,1),
+	CVehicleMake VARCHAR(40),
+	CVehicleModel VARCHAR(50),
+	CVehicleYear INT,
+	CVehicleFuelType VARCHAR(30),
+	CVehicleDrive VARCHAR(30),
+	CVehicleTrans VARCHAR(40),
+	CVehicleCyl INT,
+	CVehicleLit DEC,
+	CVehicleOdometer INT,
+	CustomerID INT FOREIGN KEY,
+	VehicleID INT FOREIGN KEY,
+	FOREIGN KEY CustomerVehicle(CustomerID) REFERENCES Customer(CustomerID),
+	FOREIGN KEY CustomerVehicle(VehicleID) REFERENCES Vehicle(VehicleID)
+)
+
+CREATE TABLE Vehicle (
+	VehicleID PRIMARY KEY,
+	Make VARCHAR(40),
+	Model VARCHAR(50),
+	Year INT,
+	VClass VARCHAR(40),
+	City INT,
+	Highway INT,
+	Combo INT,
+	FuelType VARCHAR(30),
+	FuelCost INT,
+	Drive VARCHAR(30),
+	EngID INT,
+	Eng_Desc VARCHAR(40),
+	Cylinders INT,
+	Liters DEC,
+	Transmission VARCHAR(40),
+	Trans_Desc VARCHAR(20)
+)
