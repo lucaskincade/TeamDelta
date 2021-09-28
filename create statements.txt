@@ -62,13 +62,13 @@ CREATE TABLE Trip (
   TripID INT PRIMARY KEY IDENTITY(1,1),
   CVehicleID INT,
   VehicleID INT,
-  PrevFillDate DATE, // Auto populate
-  PrevFillLine DEC, // Auto populate
-  PrevOdometer INT, // Auto populate from Previous Trip
+  PrevFillDate DATE,  
+  PrevFillLine VARCHAR(4),
+  PrevOdometer INT,
   CurrOdometer INT,
   FillDate DATE,
-  FillLine VARCHAR(4), // Auto populate from manually chosen interval
-  Distance INT, // Auto populate by (CurrOdometer - PrevOdometer)
+  FillLine VARCHAR(4),
+  Distance INT,
   FOREIGN KEY (CVehicleID) REFERENCES CustomerVehicle(CVehicleID),
   FOREIGN KEY (VehicleID) REFERENCES Vehicle(VehicleID)
 )
