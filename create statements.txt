@@ -1,5 +1,9 @@
 PROJECTF2174
 HW30hev$
+PrevGallon - CurrGallon + GallonsFilled = Gallons Used
+
+Gallons Used / Distance Traveled = Fuel Economy
+
 
 CREATE TABLE Login (
 	LoginID INT PRIMARY KEY IDENTITY(1,1),
@@ -46,6 +50,7 @@ CREATE TABLE CustomerVehicle (
 	CVehicleCyl INT,
 	CVehicleLit DEC,
 	CVehicleOdometer INT,
+	CVheicleMaxFill INT,
 	CustomerID INT,
 	VehicleID INT,
 	FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
@@ -69,6 +74,7 @@ CREATE TABLE Trip (
   FillDate DATE,
   FillLine VARCHAR(4),
   Distance INT,
+  GallonsFilled DEC,
   FOREIGN KEY (CVehicleID) REFERENCES CustomerVehicle(CVehicleID),
   FOREIGN KEY (VehicleID) REFERENCES Vehicle(VehicleID)
 )
