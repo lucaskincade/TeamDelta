@@ -1,3 +1,4 @@
+try {
 connection = new SqlConnection(connectionString);
 connection.Open();
 string sql = "INSERT INTO Account (FirstName, LastName, Email, AccountPassword) VALUES (@fname, @lname, @em, @pw)";
@@ -14,3 +15,8 @@ MessageBox.Show("You have successfully created an account!");
 
 connection.Close();
 commande.Dispose();
+}
+catch
+{
+MessageBox.Show("One or more items was entered incorrectly.");
+}
