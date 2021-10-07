@@ -3,13 +3,24 @@
 try {
 connection = new SqlConnection(connectionString);
 connection.Open();
-string sql = "INSERT INTO Account (FirstName, LastName, Email, AccountPassword) VALUES (@fname, @lname, @em, @pw)";
+string sql = "INSERT INTO Customer (FirstName, LastName) VALUES (@fname, @lname)";
 command = new SqlCommand(sql, connection);
 
 command.Parameters.AddWithValue("@fname", txtAccountCreationFirstName.Text);
 command.Parameters.AddWithValue("@lname", txtAccountCreationLastName.Text);
+
+
+command.ExecuteNonQuery();
+
+connection.Close();
+command.Dispose();
+
+sql = "INSERT INTO Login (Email, Password) VALUES (@em, @pw)";
+command = new SqlCommand(sql, connection);
+
 command.Parameters.AddWithValue("@em", txtAccountCreationEmail.Text);
 command.Parameters.AddWithValue("@pw", txtAccountCreationPassword.Text);
+
 
 command.ExecuteNonQuery();
 
@@ -30,7 +41,7 @@ try{
 
 connection = new SqlConnection(connectionString);
 connection.Open();
-string sql = "UPDATE Account SET email = @em accountPassword = @pw WHERE AccountID = @iad";
+string sql = "UPDATE Login SET email = @em accountPassword = @pw WHERE AccountID = @iad";
 command = new SqlCommand(sql, connection);
 
 command.Paramenters.AddWithValue("@em", txtEmailAddress.Text);
