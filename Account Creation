@@ -1,0 +1,16 @@
+connection = new SqlConnection(connectionString);
+connection.Open();
+string sql = "INSERT INTO Account (FirstName, LastName, Email, AccountPassword) VALUES (@fname, @lname, @em, @pw)";
+command = new SqlCommand(sql, connection);
+
+command.Parameters.AddWithValue("@fname", txtAccountCreationFirstName.Text);
+command.Parameters.AddWithValue("@lname", txtAccountCreationLastName.Text);
+command.Parameters.AddWithValue("@em", txtAccountCreationEmail.Text);
+command.Parameters.AddWithValue("@pw", txtAccountCreationPassword.Text);
+
+command.ExecuteNonQuery();
+
+MessageBox.Show("You have successfully created an account!");
+
+connection.Close();
+commande.Dispose();
