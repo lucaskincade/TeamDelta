@@ -1,3 +1,5 @@
+//ACCOUNT CREATION
+
 try {
 connection = new SqlConnection(connectionString);
 connection.Open();
@@ -14,7 +16,32 @@ command.ExecuteNonQuery();
 MessageBox.Show("You have successfully created an account!");
 
 connection.Close();
-commande.Dispose();
+command.Dispose();
+}
+catch
+{
+MessageBox.Show("One or more items was entered incorrectly.");
+}
+
+
+//ACCOUNT UPDATE
+
+try{
+
+connection = new SqlConnection(connectionString);
+connection.Open();
+string sql = "UPDATE Account SET email = @em accountPassword = @pw WHERE AccountID = @iad";
+command = new SqlCommand(sql, connection);
+
+command.Paramenters.AddWithValue("@em", txtEmailAddress.Text);
+command.Paramenters.AddWithValue("@pw", txtPassword.Text);
+
+command.ExecuteNonQuery();
+
+MessageBox.Show("Account information updated");
+
+connection.Close();
+command.Dispose();
 }
 catch
 {
