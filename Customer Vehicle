@@ -1,0 +1,29 @@
+//Add vehicle to account
+
+try
+{
+connection = new SqlConnection(connectionString);
+connection.Open();
+string sql = "INSERT INTO CustomerVehcile (VMake, VModel, VYear, VFuelType, VDrive, VTrans, VCyl, VLit, VOdometer) VALUES (@make,@model,@year,@fuel,@drive,@trans,@lit,@odo) WHERE CustomerID = @aid";
+command = new SqlCommand(sql, connection);
+
+command.Parameters.AddWithValue("@make", txtCustomerVehicleMake.Text);
+command.Parameters.AddWithValue("@model", txtCustomerVehicleMake.Text);
+command.Parameters.AddWithValue("@year", txtCustomerVehicleMake.Text);
+command.Parameters.AddWithValue("@fuel", txtCustomerVehicleMake.Text);
+command.Parameters.AddWithValue("@drive", txtCustomerVehicleMake.Text);
+command.Parameters.AddWithValue("@trans", txtCustomerVehicleMake.Text);
+command.Parameters.AddWithValue("@lit", txtCustomerVehicleMake.Text);
+command.Parameters.AddWithValue("@odo", txtCustomerVehicleMake.Text);
+
+command.ExecuteNonQuery();
+
+MessageBox.Show("Vehicle was successfully added to your account");
+
+connection.Close();
+command.Dispose();
+}
+catch
+{
+MessageBox.Show("One or more items were entered incorrectly.");
+}
