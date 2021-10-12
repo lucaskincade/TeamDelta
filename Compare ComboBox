@@ -1,0 +1,15 @@
+//ComboBox Code for comparing cars
+
+connection = new SqlConnection(connectionString);
+connection.Open();
+String sql = "SELECT Make,Model,Year FROM Vehicles WHERE VehicleID = '" + VID + "'";
+command = new SqlCommand(sql2, connection);
+datareader = command.ExecuteReader();
+  while (datareader.Read())
+       {
+         cboCompareCars.Items.AddRange(new String[] {datareader[0].ToString(),datareader[1].ToString(),datareader[2].ToString());
+       }
+
+connection.Close();
+command.Dispose();
+datareader.Close();
