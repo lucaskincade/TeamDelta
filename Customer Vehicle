@@ -15,6 +15,7 @@ command.Parameters.AddWithValue("@drive", txtCustomerVehicleMake.Text);
 command.Parameters.AddWithValue("@trans", txtCustomerVehicleMake.Text);
 command.Parameters.AddWithValue("@lit", txtCustomerVehicleMake.Text);
 command.Parameters.AddWithValue("@odo", txtCustomerVehicleMake.Text);
+command.Parameters.AddWithValue("@aid", txtCustomerID.Text);
 
 command.ExecuteNonQuery();
 
