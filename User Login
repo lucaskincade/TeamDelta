@@ -1,0 +1,35 @@
+//Code for user login
+
+private void btnLogin_Click(object sender, EventArgs e)
+        {
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+            string sql = "SELECT Username, Password, LoginID FROM Login WHERE LoginID = (SELECT LoginID FROM Login WHERE Username = '" + txtUserEmail.Text + "' AND Password = '" + txtUserPass.Text + "')";
+            command = new SqlCommand(sql, connection);
+            datareader = command.ExecuteReader();
+            //Checks to see if the information lines up with SQL
+            if (datareader.HasRows)
+            {
+                while (datareader.Read())
+                {
+
+                    if (datareader[0].ToString() == txtUserEmail.Text && datareader[1].ToString() == txtUserPass.Text)
+                    {
+                        loginID = datareader[2].ToString();
+                        MessageBox.Show("Welcome!");
+
+                    }
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("Login information was incorrect. Please try again or return to the main menu.");
+                txtUserEmail.Clear();
+                txtUserPass.Clear();
+            }
+
+            connection.Close();
+            command.Dispose();
+            datareader.Close();
+        }
