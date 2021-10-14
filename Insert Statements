@@ -1,0 +1,4 @@
+INSERT INTO Login (Username, Password) VALUES ('admin1','password1');
+
+INSERT INTO Customer (FirstName, Lastname, LoginID) 
+VALUES ('John','Smith',(SELECT LoginID FROM Login WHERE Username = 'admin1' AND Password = 'password1'))
