@@ -1,0 +1,664 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace IndividualAssignment
+{
+
+    public partial class Form1 : Form
+    {
+
+        string dbServerName;
+        string dbUsername;
+        string dbPassword;
+
+        bool isID = false;
+
+        SqlConnection connection;
+        SqlCommand command;
+        SqlDataReader datareader;
+        string connectionString;
+        public Form1()
+        {
+            InitializeComponent();
+            menuStrip1.Enabled = false;
+            menuStrip1.Visible = false;
+            showLogin();
+            cmbSelect.SelectedIndex = 0;
+            cmbChangeSelection.SelectedIndex = 0;
+            cmbSelectSearch.SelectedIndex = 0;
+            dgvCourseMultiSearch.Visible = false;
+            dgvMultiSearchInstructor.Visible = false;
+            dgvMultiSearchStudent.Visible = false;
+        }
+
+        private void showLogin()
+        {
+            gboDBLogin.Dock = DockStyle.Fill;
+            gboDBLogin.Visible = true;
+            gboLandingScreen.Visible = false;
+            gboAdd.Visible = false;
+            gboChange.Visible = false;
+            gboSearch.Visible = false;
+        }
+        private void showHome()
+        {
+            gboLandingScreen.Dock = DockStyle.Fill;
+            gboLandingScreen.Visible = true;
+            gboDBLogin.Visible = false;
+            gboAdd.Visible = false;
+            gboChange.Visible = false;
+            gboSearch.Visible = false;
+        }
+
+        private void showSearch()
+        {
+            gboSearch.Dock = DockStyle.Fill;
+            gboSearch.Visible = true;
+            gboLandingScreen.Visible = false;
+            gboChange.Visible = false;
+            gboAdd.Visible = false;
+            gboDBLogin.Visible = false;
+        }
+
+        private void showAdd()
+        {
+            gboAdd.Dock = DockStyle.Fill;
+            gboAdd.Visible = true;
+            gboDBLogin.Visible = false;
+            gboLandingScreen.Visible = false;
+            gboChange.Visible = false;
+            gboSearch.Visible = false;
+        }
+
+        private void showChange()
+        {
+            gboChange.Dock = DockStyle.Fill;
+            gboChange.Visible = true;
+            gboAdd.Visible = false;
+            gboDBLogin.Visible = false;
+            gboLandingScreen.Visible = false;
+            gboSearch.Visible = false;
+        }
+
+        private void btnConnect_Click(object sender, EventArgs e)
+        {
+            dbServerName = txtServername.Text;
+            dbUsername = txtDBUsername.Text;
+            dbPassword = txtDBPassword.Text;
+
+            try
+            {
+                connectionString = "Data Source=" + "'" + dbServerName + "'" + ";Initial Catalog=" + "'" + dbUsername + "'" + ";User ID=" + "'" + dbUsername + "'" + ";Password=" + "'" + dbPassword + "'" + ";";
+
+                connection = new SqlConnection(connectionString);
+                connection.Open();
+
+                MessageBox.Show("Connected to database.");
+
+                menuStrip1.Enabled = true;
+                menuStrip1.Visible = true;
+                showHome();
+
+                txtServername.Clear();
+                txtDBUsername.Clear();
+                txtDBPassword.Clear();
+
+                connection.Close();
+
+            }
+            catch
+            {
+                MessageBox.Show("One or more items are incorrect. Please try again.");
+                txtServername.Clear();
+                txtDBUsername.Clear();
+                txtDBPassword.Clear();
+            }
+        }
+
+
+        private void homeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showHome();
+        }
+
+        private void searchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showSearch();
+        }
+
+        private void addToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showAdd();
+        }
+
+        private void changeToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            showChange();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnAddCourse_Click(object sender, EventArgs e)
+        {
+            string tempID = "";
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+            string sql = "SELECT CLASS_ID FROM CLASS WHERE CLASS_ID =" + "'" + txtAddClassID.Text + "'";
+            command = new SqlCommand(sql, connection);
+
+            try
+            {
+                tempID = command.ExecuteScalar().ToString();
+
+                if (tempID == txtAddClassID.Text && tempID != null)
+                {
+                    MessageBox.Show("This ID is already in use. Please input another ID.");
+                    txtAddClassID.Clear();
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            catch
+            {
+                sql = "INSERT INTO Class (CLASS_ID, NAME, MTG_TIME, INST_ID, ROOM) VALUES (@id,@n,@m,@in,@r)";
+                command = new SqlCommand(sql, connection);
+
+                command.Parameters.AddWithValue("@id", txtAddClassID.Text);
+                command.Parameters.AddWithValue("@n", txtAddClassName.Text);
+                command.Parameters.AddWithValue("@m", txtAddMeetingTime.Text);
+                command.Parameters.AddWithValue("@in", txtAddCourseInstructorID.Text);
+                command.Parameters.AddWithValue("@r", txtAddRoom.Text);
+
+
+                command.ExecuteNonQuery();
+
+                MessageBox.Show("You have added one course.");
+            }
+
+            connection.Close();
+            command.Dispose();
+        }
+
+        private void btnAddInstructor_Click(object sender, EventArgs e)
+        {
+            //Add code to check if instructor ID is already in use (ExecuteScalar)
+            string tempID = "";
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+            string sql = "SELECT INST_ID FROM Instructor WHERE INST_ID =" + "'" + txtAddInstructorID.Text + "'";
+            command = new SqlCommand(sql, connection);
+            try
+            {
+                tempID = command.ExecuteScalar().ToString();
+
+                if (tempID == txtAddInstructorID.Text && tempID != null)
+                {
+                    MessageBox.Show("This ID is already in use. Please input another ID.");
+                    txtAddInstructorID.Clear();
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            catch
+            {
+                sql = "INSERT INTO Instructor (INST_ID, NAME) VALUES (@id,@n)";
+                command = new SqlCommand(sql, connection);
+
+                command.Parameters.AddWithValue("@id", txtAddInstructorID.Text);
+                command.Parameters.AddWithValue("@n", txtAddInstructorName.Text);
+
+                command.ExecuteNonQuery();
+
+                MessageBox.Show("You have added one instructor.");
+            }
+
+            connection.Close();
+            command.Dispose();
+        }
+
+        private void btnAddStudent_Click(object sender, EventArgs e)
+        {
+            //Add code to check if student ID is already in use (ExecuteScalar)
+            string tempID = "";
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+            string sql = "SELECT STUDENT_ID FROM STUDENT WHERE STUDENT_ID =" + "'" + txtAddStudentID.Text + "'";
+            command = new SqlCommand(sql, connection);
+            try
+            {
+                tempID = command.ExecuteScalar().ToString();
+
+                if (tempID == txtAddStudentID.Text && tempID != null)
+                {
+                    MessageBox.Show("This ID is already in use. Please input another ID.");
+                    txtAddStudentID.Clear();
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            catch
+            {
+                sql = "INSERT INTO Student (STUDENT_ID, NAME, MAJOR, GRADE_LVL, AGE) VALUES (@id,@n,@m,@g,@a)";
+                command = new SqlCommand(sql, connection);
+
+                command.Parameters.AddWithValue("@id", txtAddStudentID.Text);
+                command.Parameters.AddWithValue("@n", txtAddStudentName.Text);
+                command.Parameters.AddWithValue("@m", txtAddStudentMajor.Text);
+                command.Parameters.AddWithValue("@g", txtAddStudentGradeLvl.Text);
+                command.Parameters.AddWithValue("@a", txtAddStudentAge.Text);
+
+                command.ExecuteNonQuery();
+
+                MessageBox.Show("You have added one student.");
+            }
+
+            connection.Close();
+            command.Dispose();
+        }
+
+        private void cmbSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(cmbSelect.SelectedIndex == 0)
+            {
+                gboAddStudent.Visible = true;
+                gboAddInstructor.Visible = false;
+                gboAddCourse.Visible = false;
+            }
+            if (cmbSelect.SelectedIndex == 1)
+            {
+                gboAddInstructor.Visible = true;
+                gboAddStudent.Visible = false;
+                gboAddCourse.Visible = false;
+                
+            }
+            if (cmbSelect.SelectedIndex == 2)
+            {
+                gboAddCourse.Visible = true;
+                gboAddStudent.Visible = false;
+                gboAddInstructor.Visible = false;
+                
+            }
+        }
+
+        private void txtChangeClassID_TextChanged(object sender, EventArgs e)
+        {
+            string tempID = "";
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+            string sql = "SELECT CLASS_ID FROM Class WHERE CLASS_ID = " + "'" + txtChangeClassID.Text + "'";
+            command = new SqlCommand(sql, connection);
+            try
+            {
+                tempID = command.ExecuteScalar().ToString();
+                if (tempID == txtChangeClassID.Text)
+                {
+                    sql = "SELECT Name, MTG_TIME, INST_ID, ROOM FROM Class WHERE CLASS_ID = " + "'" + txtChangeClassID.Text + "'";
+                    command = new SqlCommand(sql, connection);
+                    datareader = command.ExecuteReader();
+                    while (datareader.Read() && datareader.FieldCount > 0)
+                    {
+                        txtChangeClassName.Text = datareader[0].ToString();
+                        txtChangeMeetingTime.Text = datareader[1].ToString();
+                        txtChangeInstructorID.Text = datareader[2].ToString();
+                        txtChangeRoom.Text = datareader[3].ToString();
+
+                        isID = true;
+                    }
+
+                    datareader.Close();
+                }
+            }
+            catch
+            {
+                if (txtChangeClassID.Text != "")
+                {
+                    //MessageBox.Show("Invalid ID. Please input an existing ID.");
+                    isID = false;
+                    //txtChangeClassID.Clear();
+                }
+            }
+
+            connection.Close();
+            command.Dispose();
+        }
+
+        private void btnChangeCourse_Click(object sender, EventArgs e)
+        {
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+            if (isID == true && txtChangeClassID.Text != "")
+            {
+                string sql = "UPDATE Class SET Name = @n, MTG_TIME = @mt, INST_ID = @id, ROOM = @r WHERE Class_ID = " + "'" + txtChangeClassID.Text + "'";
+                command = new SqlCommand(sql, connection);
+
+                command.Parameters.AddWithValue("@n", txtChangeClassName.Text);
+                command.Parameters.AddWithValue("@mt", txtChangeMeetingTime.Text);
+                command.Parameters.AddWithValue("@id", txtChangeInstructorID.Text);
+                command.Parameters.AddWithValue("@r", txtChangeRoom.Text);
+
+                command.ExecuteNonQuery();
+
+                MessageBox.Show("You have changed one course.");
+                txtChangeClassID.Clear();
+                txtChangeClassName.Clear();
+                txtChangeMeetingTime.Clear();
+                txtChangeInstructorID.Clear();
+                txtChangeRoom.Clear();
+            }
+            else
+            {
+                MessageBox.Show("Invalid ID. Please input an existing ID.");
+                txtChangeClassID.Clear();
+                txtChangeClassName.Clear();
+                txtChangeMeetingTime.Clear();
+                txtChangeInstructorID.Clear();
+                txtChangeRoom.Clear();
+            }
+
+            connection.Close();
+            command.Dispose();
+        }
+
+        private void txtCInstructorID_TextChanged(object sender, EventArgs e)
+        {
+            string tempID = "";
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+            string sql = "SELECT INST_ID FROM Instructor WHERE INST_ID = " + "'" + txtCInstructorID.Text + "'";
+            command = new SqlCommand(sql, connection);
+            try
+            {
+                tempID = command.ExecuteScalar().ToString();
+                if (tempID == txtCInstructorID.Text)
+                {
+                    sql = "SELECT Name FROM Instructor WHERE INST_ID = " + "'" + txtCInstructorID.Text + "'";
+                    command = new SqlCommand(sql, connection);
+                    datareader = command.ExecuteReader();
+                    while (datareader.Read())
+                    {
+                        txtChangeInstructorName.Text = datareader[0].ToString();
+                        isID = true;
+                    }
+                    datareader.Close();
+                }
+            }
+            catch
+            {
+                if (txtCInstructorID.Text != "")
+                {
+                    //MessageBox.Show("Invalid ID. Please input an existing ID.");
+                    isID = false;
+                    //txtCInstructorID.Clear();
+                }
+            }
+
+            connection.Close();
+            command.Dispose();
+        }
+
+        private void btnChangeInstructor_Click(object sender, EventArgs e)
+        {
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+            if (isID == true && txtCInstructorID.Text != "")
+            {
+                string sql = "UPDATE Instructor SET Name = @n WHERE INST_ID = " + "'" + txtCInstructorID.Text + "'";
+                command = new SqlCommand(sql, connection);
+
+                command.Parameters.AddWithValue("@n", txtChangeInstructorName.Text);
+
+                command.ExecuteNonQuery();
+
+                MessageBox.Show("You have changed one instructor.");
+                txtCInstructorID.Clear();
+                txtChangeInstructorName.Clear();
+            }
+            else
+            {
+                MessageBox.Show("Invalid ID. Please input an existing ID.");
+                txtCInstructorID.Clear();
+                txtChangeInstructorName.Clear();
+            }
+
+            connection.Close();
+            command.Dispose();
+        }
+
+        private void txtChangeStudentID_TextChanged(object sender, EventArgs e)
+        {
+            string tempID = "";
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+            string sql = "SELECT STUDENT_ID FROM Student WHERE STUDENT_ID = " + "'" + txtChangeStudentID.Text + "'";
+            command = new SqlCommand(sql, connection);
+            try
+            {
+                tempID = command.ExecuteScalar().ToString();
+                if (tempID == txtChangeStudentID.Text)
+                {
+                    sql = "SELECT Name, MAJOR, GRADE_LVL, AGE FROM Student WHERE STUDENT_ID = " + "'" + txtChangeStudentID.Text + "'";
+                    command = new SqlCommand(sql, connection);
+                    datareader = command.ExecuteReader();
+                    while (datareader.Read())
+                    {
+                        txtChangeStudentName.Text = datareader[0].ToString();
+                        txtChangeStudentMajor.Text = datareader[1].ToString();
+                        txtChangeStudentGradeLvl.Text = datareader[2].ToString();
+                        txtChangeStudentAge.Text = datareader[3].ToString();
+
+                        isID = true;
+                    }
+
+                    datareader.Close();
+                }
+            }
+            catch
+            {
+                if (txtChangeStudentID.Text != "")
+                {
+                    //MessageBox.Show("Invalid ID. Please input an existing ID.");
+                    isID = false;
+                    //txtChangeStudentID.Clear();
+                }
+            }
+
+            connection.Close();
+            command.Dispose();
+        }
+
+        private void btnChangeStudent_Click(object sender, EventArgs e)
+        {
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+            if (isID == true && txtChangeStudentID.Text != "")
+            {
+                string sql = "UPDATE Student SET Name = @n, MAJOR = @m, GRADE_LVL = @g, AGE = @a WHERE STUDENT_ID = " + "'" + txtChangeStudentID.Text + "'";
+                command = new SqlCommand(sql, connection);
+
+                command.Parameters.AddWithValue("@n", txtChangeStudentName.Text);
+                command.Parameters.AddWithValue("@m", txtChangeStudentMajor.Text);
+                command.Parameters.AddWithValue("@g", txtChangeStudentGradeLvl.Text);
+                command.Parameters.AddWithValue("@a", txtChangeStudentAge.Text);
+
+                command.ExecuteNonQuery();
+
+                MessageBox.Show("You have changed one student.");
+                txtChangeStudentID.Clear();
+                txtChangeStudentName.Clear();
+                txtChangeStudentMajor.Clear();
+                txtChangeStudentGradeLvl.Clear();
+                txtChangeStudentAge.Clear();
+            }
+            else
+            {
+                MessageBox.Show("Invalid ID. Please input an existing ID.");
+                txtChangeStudentID.Clear();
+                txtChangeStudentName.Clear();
+                txtChangeStudentMajor.Clear();
+                txtChangeStudentGradeLvl.Clear();
+                txtChangeStudentAge.Clear();
+            }
+
+            connection.Close();
+            command.Dispose();
+        }
+
+        private void cmbChangeSelection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbChangeSelection.SelectedIndex == 0)
+            {
+                gboChangeStudent.Visible = true;
+                gboChangeInstructor.Visible = false;
+                gboChangeCourse.Visible = false;
+            }
+            if (cmbChangeSelection.SelectedIndex == 1)
+            {
+                gboChangeInstructor.Visible = true;
+                gboChangeStudent.Visible = false;
+                gboChangeCourse.Visible = false;
+
+            }
+            if (cmbChangeSelection.SelectedIndex == 2)
+            {
+                gboChangeCourse.Visible = true;
+                gboChangeStudent.Visible = false;
+                gboChangeInstructor.Visible = false;
+
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cmbSelectSearch_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(cmbSelectSearch.SelectedIndex == 0)
+            {
+                gboSearchStudent.Visible = true;
+                gboSearchInstructor.Visible = false;
+                gboSearchCourse.Visible = false;
+            }
+            if (cmbSelectSearch.SelectedIndex == 1)
+            {
+                gboSearchInstructor.Visible = true;
+                gboSearchStudent.Visible = false;
+                gboSearchCourse.Visible = false;
+            }
+            if (cmbSelectSearch.SelectedIndex == 2)
+            {
+                gboSearchCourse.Visible = true;
+                gboSearchStudent.Visible = false;
+                gboSearchInstructor.Visible = false;
+            }
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+
+            if (cmbSelectSearch.SelectedIndex == 0)
+            {
+                string sql = "SELECT * FROM Student WHERE STUDENT_ID = " + "'" + txtSearchStudentID.Text + "'" + "OR NAME= " + "'" + txtSearchStudentName.Text + "'" + "OR MAJOR= " + "'" + txtSearchStudentMajor.Text + "'" + "OR GRADE_LVL= " + "'" + txtSearchStudentGradeLvl.Text + "'" + "OR AGE= " + "'" + txtSearchStudentAge.Text + "'";
+
+                var da = new SqlDataAdapter(sql, connection);
+                var ds = new DataSet();
+                da.Fill(ds);
+                dgvSingleSearchStudent.DataSource = ds.Tables[0];
+
+                sql = "SELECT * FROM STUDENT,ClASS INNER JOIN ENROLL ON ENROLL.CLASS_ID = CLASS.CLASS_ID WHERE ENROll.STUDENT_ID = " + "'" + txtSearchStudentID.Text + "'" + "AND STUDENT.STUDENT_ID = " + "'" + txtSearchStudentID.Text + "'";
+                da = new SqlDataAdapter(sql, connection);
+                ds = new DataSet();
+                da.Fill(ds);
+                dgvMultiSearchStudent.DataSource = ds.Tables[0];
+            }
+            if (cmbSelectSearch.SelectedIndex == 1)
+            {
+                string sql = "SELECT * FROM Instructor WHERE INST_ID = " + "'" + txtSearchInstructorID.Text + "'" + "OR NAME= " + "'" + txtSearchInstructorName.Text + "'";
+
+                var da = new SqlDataAdapter(sql, connection);
+                var ds = new DataSet();
+                da.Fill(ds);
+                dgvSingleSearchInstructor.DataSource = ds.Tables[0];
+
+                sql = "SELECT * FROM INSTRUCTOR, CLASS INNER JOIN ENROLL ON ENROLL.CLASS_ID = CLASS.CLASS_ID WHERE INSTRUCTOR.INST_ID = " + "'" + txtSearchInstructorID.Text + "'";
+                da = new SqlDataAdapter(sql, connection);
+                ds = new DataSet();
+                da.Fill(ds);
+                dgvMultiSearchInstructor.DataSource = ds.Tables[0];
+            }
+            if (cmbSelectSearch.SelectedIndex == 2)
+            {
+                string sql = "SELECT * FROM Class WHERE CLASS_ID = " + "'" + txtSearchClassID.Text + "'" + "OR NAME= " + "'" + txtSearchClassName.Text + "'" + "OR MTG_TIME= " + "'" + txtSearchMeetingTime.Text + "'" + "OR INST_ID= " + "'" + txtSearchCInstructorID.Text + "'" + "OR ROOM= " + "'" + txtSearchRoom.Text + "'";
+
+                var da = new SqlDataAdapter(sql, connection);
+                var ds = new DataSet();
+                da.Fill(ds);
+                dgvCourseSingleSearch.DataSource = ds.Tables[0];
+
+                sql = "SELECT * FROM STUDENT,INSTRUCTOR, CLASS INNER JOIN ENROLL ON ENROLL.CLASS_ID = CLASS.CLASS_ID WHERE ENROll.CLASS_ID = " + "'" + txtSearchClassID.Text + "'";
+                da = new SqlDataAdapter(sql, connection);
+                ds = new DataSet();
+                da.Fill(ds);
+                dgvCourseMultiSearch.DataSource = ds.Tables[0];
+            }
+
+            connection.Close();
+        }
+
+        private void chbMultiSearchStudent_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chbMultiSearchStudent.Checked == true)
+            {
+                dgvMultiSearchStudent.Visible = true;
+            }
+            if (chbMultiSearchStudent.Checked == false)
+            {
+                dgvMultiSearchStudent.Visible = false;
+            }
+        }
+
+        private void chbMultiSearchInstructor_CheckedChanged(object sender, EventArgs e)
+        {
+            if(chbMultiSearchInstructor.Checked == true)
+            {
+                dgvMultiSearchInstructor.Visible = true;
+            }
+            if (chbMultiSearchInstructor.Checked == false)
+            {
+                dgvMultiSearchInstructor.Visible = false;
+            }
+        }
+
+        private void chbSearchCourseMulti_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chbSearchCourseMulti.Checked == true)
+            {
+                dgvCourseMultiSearch.Visible = true;
+            }
+            if (chbSearchCourseMulti.Checked == false)
+            {
+                dgvCourseMultiSearch.Visible = false;
+            }
+        }
+    }
+}
